@@ -89,3 +89,45 @@ SELECT mi.verdict, AVG(m.box_office) AS avg_box_office
 FROM marvel m
 JOIN marvel_info mi ON m.movie_id = mi.movie_id
 GROUP BY mi.verdict;
+
+
+-- Find Marvel movies with box office greater than the average Marvel box office.
+
+
+SELECT * FROM marvel
+WHERE box_office > (
+    SELECT AVG(box_office) FROM marvel
+);
+
+
+--  Get the title of the highest-grossing DC movie.
+
+SELECT title FROM dc
+WHERE box_office = (
+    SELECT MAX(box_office) FROM dc
+);
+
+
+--  List all Marvel movies that have the same cinematographer as any DC movie.
+
+SELECT m.title
+FROM marvel m
+JOIN marvel_info mi ON m.movie_id = mi.movie_id
+WHERE mi.cinematographer IN (
+    SELECT DISTINCT cinematographer FROM dc_info
+);
+
+
+
+
+
+-- . Find the cinematographer(s) who worked on both Marvel and DC movies
+
+
+SELECT cinematographer
+FROM marvel_info
+WHERE cinematographer IN (
+    SELECT cinematographer FROM dc_info
+);
+
+
