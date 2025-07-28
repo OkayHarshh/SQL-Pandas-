@@ -131,3 +131,39 @@ WHERE cinematographer IN (
 );
 
 
+
+
+-- Procedure to insert a new Marvel movie
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE InsertMarvelMovie(
+    IN mid INT,
+    IN title VARCHAR(100),
+    IN director VARCHAR(100),
+    IN year INT,
+    IN box DECIMAL(10,2)
+)
+BEGIN
+    DECLARE count_id INT;
+
+    -- Check if movie_id already exists
+    SELECT COUNT(*) INTO count_id FROM marvel WHERE movie_id = mid;
+
+    IF count_id > 0 THEN
+        -- Shift all movie_ids >= mid by +1 (to make space)
+        UPDATE marvel
+        SET movie_id = movie_id + 1
+        WHERE movie_id >= mid
+        ORDER BY movie_id DESC; -- Prevent conflict by shifting from high to low
+    END IF;
+
+    -- Insert new movie
+    INSERT INTO marvel(movie_id, title, director, release_year, box_office)
+    VALUES (mid, title, director, year, box);
+END //
+
+DELIMITER ;
+
